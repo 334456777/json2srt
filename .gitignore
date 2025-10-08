@@ -1,0 +1,16 @@
+# Go 编译产物
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+json2srt
+
+# Go 依赖缓存
+vendor/
+
+# 编辑器/IDE 文件
+.vscode/
+.idea/
+*.swp
