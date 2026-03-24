@@ -12,42 +12,42 @@ import (
 	"sync"
 )
 
-// --- 结构体定义 ---
-// Timestamp 表示时间戳结构，包含开始和结束时间
+// --- Struct Definitions ---
+// Timestamp represents a timestamp structure containing start and end times
 type Timestamp struct {
-	From string `json:"from"` // 开始时间，格式如 "00:00:00,000"
-	To   string `json:"to"`   // 结束时间，格式如 "00:00:01,960"
+	From string `json:"from"` // Start time, format "00:00:00,000"
+	To   string `json:"to"`   // End time, format "00:00:01,960"
 }
 
-// Token 表示转录中的单个词元
+// Token represents a single word in transcription
 type Token struct {
-	Text       string    `json:"text"`       // 词元文本
-	Timestamps Timestamp `json:"timestamps"` // 该词元的时间戳
+	Text       string    `json:"text"`       // Token text
+	Timestamps Timestamp `json:"timestamps"` // Timestamps for this token
 }
 
-// Segment 表示转录中的一个段落
+// Segment represents a paragraph in transcription
 type Segment struct {
-	Timestamps Timestamp `json:"timestamps"` // 段落的时间戳
-	Text       string    `json:"text"`       // 段落的文本内容
-	Tokens     []Token   `json:"tokens"`     // 该段落的词元列表
+	Timestamps Timestamp `json:"timestamps"` // Timestamps for the paragraph
+	Text       string    `json:"text"`       // Text content of the paragraph
+	Tokens     []Token   `json:"tokens"`     // Token list for this paragraph
 }
 
-// WhisperOutput 表示 Whisper 转录输出的根结构
+// WhisperOutput represents the root structure of Whisper transcription output
 type WhisperOutput struct {
-	Transcription []Segment `json:"transcription"` // 转录段落列表
+	Transcription []Segment `json:"transcription"` // List of transcription paragraphs
 }
 
-// --- 核心逻辑 ---
-// extractTimestamps 从 segment 的 tokens 中提取开始和结束时间戳
-// 返回 startTime, endTime, hasValidTokens
+// --- Core Logic ---
+// extractTimestamps extracts start and end timestamps from segment's tokens
+// Returns startTime, endTime, hasValidTokens
 func extractTimestamps(segment Segment) (string, string, bool) {
 	var startTime, endTime string
 	hasValidTokens := false
 
-	// 查找第一个非噪音 token 的开始时间
+	// Find first non-noise token's start time
 	for _, token := range segment.Tokens {
 		if !strings.HasPrefix(token.Text, "[_") && token.Text != "" {
-			// 使用 token 的 From 作为开始时间
+			// Use token's From as start time
 			startTime = token.Timestamps.From
 			hasValidTokens = true
 			break
